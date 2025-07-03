@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>แจ้งลา - LEGEND</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f0f0;
+      padding: 20px;
+    }
+
+    .form-container {
+      max-width: 500px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    }
+
+    label, select, input, textarea {
+      display: block;
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    .checkbox-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px 20px;
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
+
+    .checkbox-grid label {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      white-space: nowrap;
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <h2>แจ้งลา</h2>
+    <form id="leaveForm">
+      <label>ชื่อ</label>
+      <select id="name">
+        <option value="">-- เลือกชื่อ --</option>
+        <option>Manu Hxpe</option>
+        <option>บอสเบน</option>
+        <option>บอสเป็ด</option>
+      </select>
+
+      <label>ประเภทลา</label>
+      <div class="checkbox-grid">
+        <label><input type="checkbox" name="type" value="Bank 20.00"> Bank 20.00</label>
+        <label><input type="checkbox" name="type" value="Airdrop 20.30"> Airdrop 20.30</label>
+        <label><input type="checkbox" name="type" value="Bank 22.00"> Bank 22.00</label>
+        <label><input type="checkbox" name="type" value="Airdrop 22.30"> Airdrop 22.30</label>
+        <label><input type="checkbox" name="type" value="ลาทั้งวัน"> ลาทั้งวัน</label>
+      </div>
+
+      <label>เหตุผล</label>
+      <textarea id="reason" rows="3" placeholder="ระบุเหตุผล..."></textarea>
+
+      <button type="submit">ส่งข้อมูล</button>
+    </form>
+  </div>
+
+  <script>
+    const form = document.getElementById('leaveForm');
+    const webhookURL = "https://discord.com/api/webhooks/1390285132702945280/MrfRP8L6x33nHDCFj3pSxI4sCfcbOaBTGosr8W1NXnZjJ5Z3Mh32OllZjnY95v0GjnHi";
+
+    form.addEventListener('submit', function(event) {
+      event.preventDefault();
+
+      const name = document.getElementById('name').value;
+      const reason = document.getElementById('reason').value;
+      const types = [...document.querySelectorAll('input[name="type"]:checked')].map(cb => cb.value).join(', ');
+
+      const content = `📌 **${name}** ขออนุญาตลา\n` +
+                      `ประเภทการลา: ${types || '-'}\n` +
+                      `เหตุผล: ${reason || '-'}`;
+
+      fetch(webhookURL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content })
+      })
+      .then(res => {
+        if (res.ok) {
+          alert('ส่งข้อมูลเรียบร้อยแล้ว!');
+          form.reset();
+        } else {
+          alert('ส่งข้อมูลไม่สำเร็จ');
+        }
+      })
+      .catch(err => {
+        alert('เกิดข้อผิดพลาดในการเชื่อมต่อ Discord');
+        console.error(err);
+      });
+    });
+  </script>
+</body>
+</html>
